@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="text-center">Budget Tracker</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>Total Budget: <span class="badge badge-info">${{ total_budget }}</span></h4>
+                        <h4>Total Credits: <span class="badge badge-success">${{ total_credits }}</span></h4>
+                        <h4>Total Expenses: <span class="badge badge-danger">${{ total_expenses }}</span></h4>
+                        <h4>Remaining Budget: <span class="badge badge-warning">${{ remaining_budget }}</span></h4>
+
+                        <form method="post" class="mt-4">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" name="action" value="credit" class="btn btn-success btn-block">Add Credit</button>
+                            <button type="submit" name="action" value="debit" class="btn btn-danger btn-block">Add Debit</button>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <form method="post" action="{% url 'reset' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-block">Reset Budget</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Summary of all transactions -->
+                <div class="mt-5">
+                    <h3>Trip Summary</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item"><strong>Total Budget:</strong> ${{ summary.total_budget }}</li>
+                        <li class="list-group-item"><strong>Total Credits:</strong> ${{ summary.total_credits }}</li>
+                        <li class="list-group-item"><strong>Total Expenses:</strong> ${{ summary.total_expenses }}</li>
+                        <li class="list-group-item"><strong>Remaining Budget:</strong> ${{ summary.remaining_budget }}</li>
+                    </ul>
+
+                    <h4 class="mt-4">Detailed Transactions</h4>
+                    <ul class="list-group">
+                        {% for transaction in summary.transactions %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ transaction.name }}: ${{ transaction.amount }} 
+                                <span class="badge badge-primary badge-pill">{{ transaction.type }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No transactions yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
